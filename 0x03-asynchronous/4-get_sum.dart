@@ -1,30 +1,118 @@
+// import 'dart:convert';
+// import '4-util.dart';
+
+// Future<double> calculateTotal() async {
+//   try {
+//     // 1. Récupérer les infos utilisateur
+//     String userDataStr = await fetchUserData();
+//     Map<String, dynamic> userData = json.decode(userDataStr);
+//     String userId = userData['id'];
+
+//     // 2. Récupérer les commandes de l'utilisateur
+//     String ordersStr = await fetchUserOrders(userId);
+//     List<dynamic> orders = json.decode(ordersStr);
+
+//     double total = 0.0;
+
+//     // 3. Boucler sur chaque produit et récupérer son prix
+//     for (var product in orders) {
+//       String priceStr = await fetchProductPrice(product);
+//       var priceDecoded = json.decode(priceStr);
+
+//       if (priceDecoded is num) {
+//         total += priceDecoded.toDouble();
+//       }
+//     }
+
+//     // 4. Retourner le total
+//     return total;
+//   } catch (e) {
+//     // En cas d'erreur, on retourne -1
+//     return -1;
+//   }
+// }
+
+// import 'dart:convert';
+// import '4-util.dart';
+
+// Future<double> calculateTotal() async {
+//   try {
+//     String userDataStr = await fetchUserData();
+//     Map<String, dynamic> userData = json.decode(userDataStr);
+//     String userId = userData['id'];
+
+//     String ordersStr = await fetchUserOrders(userId);
+//     List<dynamic> orders = json.decode(ordersStr) ?? [];
+
+//     double total = 0.0;
+
+//     for (var product in orders) {
+//       String priceStr = await fetchProductPrice(product);
+//       var priceDecoded = json.decode(priceStr);
+
+//       if (priceDecoded is num) {
+//         total += priceDecoded.toDouble();
+//       }
+//     }
+
+//     return total;
+//   } catch (e) {
+//     return -1.0;
+//   }
+// }
+
+// import 'dart:convert';
+// import '4-util.dart';
+
+// Future<double> calculateTotal() async {
+//   try {
+//     String userDataStr = await fetchUserData();
+//     Map<String, dynamic> userData = json.decode(userDataStr);
+//     String userId = userData['id'];
+
+//     String ordersStr = await fetchUserOrders(userId);
+//     List<dynamic> orders = json.decode(ordersStr) ?? [];
+
+//     double total = 0.0;
+
+//     for (var product in orders) {
+//       String priceStr = await fetchProductPrice(product);
+//       var priceDecoded = json.decode(priceStr);
+
+//       if (priceDecoded is num) {
+//         total += priceDecoded.toDouble();
+//       }
+//     }
+
+//     return total;
+//   } catch (e) {
+//     return -1;  // ⬅️ ici, bien -1 sans .0
+//   }
+// }
+
 import '4-util.dart';
 import 'dart:convert';
 
-Future<double> calculateTotal() async {
+Future<num> calculateTotal() async {
   try {
-    // 1. Récupérer les données utilisateur
-    final userData = await fetchUserData();
-    final user = jsonDecode(userData);
-    final userId = user['id'];
+    Map<String, dynamic> userData =
+        jsonDecode(await fetchUserData());
 
-    // 2. Récupérer les commandes de l'utilisateur
-    final ordersData = await fetchUserOrders(userId);
-    final orders = jsonDecode(ordersData);
+    String userId = userData['id'].toString();
 
-    double total = 0;
+    List<dynamic> userOrders =
+        jsonDecode(await fetchUserOrders(userId));
 
-    // 3. Parcourir chaque produit de la commande
-    for (var product in orders) {
-      final priceData = await fetchProductPrice(product);
-      final price = jsonDecode(priceData);
+    double total = 0.0;
 
-      // Additionner le prix
-      total += price;
+    for (var product in userOrders) {
+      total += double.parse(
+        await fetchProductPrice(product),
+      );
     }
 
     return total;
-  } catch (e) {
+  } catch (error) {
     return -1;
   }
 }

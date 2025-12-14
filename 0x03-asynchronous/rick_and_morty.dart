@@ -3,27 +3,23 @@ import 'package:http/http.dart' as http;
 
 Future<void> printRmCharacters() async {
   try {
-    String? url = 'https://rickandmortyapi.com/api/character';
+    final url = Uri.parse("https://rickandmortyapi.com/api/character");
 
-    while (url != null) {
-      final response = await http.get(Uri.parse(url));
+    final response = await http.get(url);
 
-      if (response.statusCode != 200) {
-        throw 'Request failed with status: ${response.statusCode}';
-      }
+    if (response.statusCode != 200) {
+      throw "Request failed with status: ${response.statusCode}";
+    }
 
-      final data = jsonDecode(response.body);
-      final results = data['results'];
+    final data = json.decode(response.body);
 
-      if (results is List) {
-        for (var character in results) {
-          print(character['name']);
-        }
-      }
+    // On récupère la liste des personnages
+    List characters = data["results"];
 
-      url = data['info']['next'];
+    for (var character in characters) {
+      print(character["name"]);
     }
   } catch (e) {
-    print('error caught: $e');
+    print("error caught: $e");
   }
 }
